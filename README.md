@@ -10,11 +10,13 @@ Currently there are NO DFU methods, DO NOT flash it without a debugger.
 - [x] PMS UART bluetooth passthrough
 - [ ] RTC
 - [ ] Reformat PMS sensors data
-- [ ] OTA DFU
+
+## Known issues
+* NO OTA DFU (DUE TO LACK OF SRAM)
 
 ## Compile
 
-* Edit `Makefile` and replace `SDK_ROOT` to your SDK installation directory.
+* Edit `Makefile` and replace `SDK_ROOT` to your SDK installation directory. (SDK Version:12.3.0)
 * Edit your SDK `components/toolchain/gcc/Makefile.posix` or `Makefile.windows` and set to your the gcc path
 * `make`
 
