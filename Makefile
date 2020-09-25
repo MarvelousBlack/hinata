@@ -10,7 +10,8 @@ $(OUTPUT_DIRECTORY)/nrf51822_xxaa.out: \
 
 # Source files common to all targets
 SRC_FILES += \
-  $(PROJ_DIR)/main.c \
+  $(PROJ_DIR)/src/main.c \
+  $(PROJ_DIR)/src/pms7003.c \
   $(SDK_ROOT)/components/libraries/log/src/nrf_log_backend_serial.c \
   $(SDK_ROOT)/components/libraries/log/src/nrf_log_frontend.c \
   $(SDK_ROOT)/components/libraries/button/app_button.c \
@@ -44,11 +45,11 @@ SRC_FILES += \
   $(SDK_ROOT)/components/toolchain/system_nrf51.c \
   $(SDK_ROOT)/components/ble/ble_services/ble_nus/ble_nus.c \
   $(SDK_ROOT)/components/softdevice/common/softdevice_handler/softdevice_handler.c \
-  $(SDK_ROOT)/components/ble/ble_services/ble_lbs/ble_lbs.c \
 
 # Include folders common to all targets
 INC_FOLDERS += \
   $(PROJ_DIR) \
+  $(PROJ_DIR)/src \
   $(PROJ_DIR)/config \
   $(SDK_ROOT)/components/drivers_nrf/comp \
   $(SDK_ROOT)/components/drivers_nrf/twi_master \
@@ -100,8 +101,6 @@ INC_FOLDERS += \
   $(SDK_ROOT)/components/drivers_nrf/twis_slave \
   $(SDK_ROOT)/components \
   $(SDK_ROOT)/components/libraries/scheduler \
-  $(SDK_ROOT)/components/ble/ble_services/ble_lbs \
-  $(SDK_ROOT)/components/ble/ble_services/ble_hts \
   $(SDK_ROOT)/components/drivers_nrf/delay \
   $(SDK_ROOT)/components/libraries/crc16 \
   $(SDK_ROOT)/components/drivers_nrf/timer \
@@ -140,7 +139,6 @@ INC_FOLDERS += \
   $(SDK_ROOT)/components/libraries/button \
   $(SDK_ROOT)/components/libraries/usbd \
   $(SDK_ROOT)/components/drivers_nrf/saadc \
-  $(SDK_ROOT)/components/ble/ble_services/ble_lbs_c \
   $(SDK_ROOT)/components/ble/ble_racp \
   $(SDK_ROOT)/components/toolchain/gcc \
   $(SDK_ROOT)/components/libraries/fds \

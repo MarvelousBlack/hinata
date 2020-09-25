@@ -1,15 +1,21 @@
 # Hinata
 A firmware for MOPS·VIDA PM 2.5 Watchdog.
 
+# Device
+Original device(MOPS·VIDA PM 2.5 Watchdog) information can found in  
+https://github.com/NiceLabs/mops-vida-pm-watchdog/tree/master/docs .
+
 ## WARNING
 Currently there are NO DFU methods, DO NOT flash it without a debugger.
 
 ## Todo
-- [ ] LEDs bluetooth control
-- [ ] Power management
 - [x] PMS UART bluetooth passthrough
+- [x] Reformat PMS sensors data
+- [ ] LEDs bluetooth control
+- [ ] Device Information service
+- [ ] Battery Service
+- [ ] Power management
 - [ ] RTC
-- [ ] Reformat PMS sensors data
 
 ## Known issues
 * NO OTA DFU (DUE TO LACK OF SRAM)
@@ -27,5 +33,6 @@ If you are not using ST-LINKV2, try the following:
 ```
 openocd { YOUR_DEBUGGER_CONFIG } -c 'set WORKAREASIZE 0' -f target/nrf51.cfg
 ```
-
+## Protocol
+[protocol-design](doc/protocol-design.md)
 

@@ -1,4 +1,37 @@
 /**
+file:     main.c
+author:   megumifox
+
+MIT License
+
+Copyright (c) 2020 megumifox <i@megumifox.com>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+**/
+
+/**************************************************************************/
+/* This file is heavily modified from Nordic sdk example.                 */
+/* original copyright information below:                                  */
+/**************************************************************************/
+
+/**
  * Copyright (c) 2014 - 2017, Nordic Semiconductor ASA
  * 
  * All rights reserved.
@@ -38,16 +71,6 @@
  * 
  */
 
-/** @file
- *
- * @defgroup ble_sdk_uart_over_ble_main main.c
- * @{
- * @ingroup  ble_sdk_app_nus_eval
- * @brief    UART over BLE application main file.
- *
- * This file contains the source code for a sample application that uses the Nordic UART service.
- * This application uses the @ref srvlib_conn_params module.
- */
 
 #include <stdint.h>
 #include <string.h>
@@ -65,6 +88,7 @@
 #include "app_util_platform.h"
 #include "bsp.h"
 #include "bsp_btn_ble.h"
+#include "pms7003.h"
 
 #define IS_SRVC_CHANGED_CHARACT_PRESENT 0                                           /**< Include the service_changed characteristic. If not enabled, the server's database cannot be changed for the lifetime of the device. */
 
@@ -95,10 +119,13 @@
 
 #define DEAD_BEEF                       0xDEADBEEF                                  /**< Value used as error code on stack dump, can be used to identify stack location on stack unwind. */
 
-#define UART_TX_BUF_SIZE                512                                         /**< UART TX buffer size. */
-#define UART_RX_BUF_SIZE                512                                         /**< UART RX buffer size. */
+#define UART_TX_BUF_SIZE                256                                         /**< UART TX buffer size. */
+#define UART_RX_BUF_SIZE                256                                         /**< UART RX buffer size. */
 
-static ble_nus_t                        m_nus;                                      /**< Structure to identify the Nordic UART Service. */
+ble_nus_t                        m_nus;                                             /**< Structure to identify the Nordic UART Service. */
+
+pms7003_data_t                   pms7003_data;                                      /**< Structure to save PMS7003 data. */
+
 static uint16_t                         m_conn_handle = BLE_CONN_HANDLE_INVALID;    /**< Handle of the current connection. */
 
 static ble_uuid_t                       m_adv_uuids[] = {{BLE_UUID_NUS_SERVICE, BLE_UUID_TYPE_BLE}};  /**< Universally unique service identifier. */
@@ -478,52 +505,6 @@ void bsp_event_handler(bsp_event_t event)
 }
 
 
-/**@brief   Function for handling app_uart events.
- *
- * @details This function will receive a single character from the app_uart module and append it to
- *          a string. The string will be be sent over BLE when the last character received was a
- *          'new line' i.e '\r\n' (hex 0x0D) or if the string has reached a length of
- *          @ref NUS_MAX_DATA_LENGTH.
- */
-/**@snippet [Handling the data received over UART] */
-void uart_event_handle(app_uart_evt_t * p_event)
-{
-    static uint8_t data_array[BLE_NUS_MAX_DATA_LEN];
-    static uint8_t index = 0;
-    uint32_t       err_code;
-
-    switch (p_event->evt_type)
-    {
-        case APP_UART_DATA_READY:
-            UNUSED_VARIABLE(app_uart_get(&data_array[index]));
-            index++;
-
-            if ((data_array[index - 1] == '\n') || (index >= (BLE_NUS_MAX_DATA_LEN)))
-            {
-                err_code = ble_nus_string_send(&m_nus, data_array, index);
-                if (err_code != NRF_ERROR_INVALID_STATE)
-                {
-                    APP_ERROR_CHECK(err_code);
-                }
-
-                index = 0;
-            }
-            break;
-
-        case APP_UART_COMMUNICATION_ERROR:
-            APP_ERROR_HANDLER(p_event->data.error_communication);
-            break;
-
-        case APP_UART_FIFO_ERROR:
-            APP_ERROR_HANDLER(p_event->data.error_code);
-            break;
-
-        default:
-            break;
-    }
-}
-/**@snippet [Handling the data received over UART] */
-
 
 /**@brief  Function for initializing the UART module.
  */
@@ -545,7 +526,7 @@ static void uart_init(void)
     APP_UART_FIFO_INIT( &comm_params,
                        UART_RX_BUF_SIZE,
                        UART_TX_BUF_SIZE,
-                       uart_event_handle,
+                       pms7003_uart_event_handle,
                        APP_IRQ_PRIORITY_LOWEST,
                        err_code);
     APP_ERROR_CHECK(err_code);
@@ -643,6 +624,3 @@ int main(void)
 }
 
 
-/**
- * @}
- */

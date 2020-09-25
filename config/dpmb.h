@@ -49,6 +49,8 @@ extern "C" {
 #define PMS_TX        5
 #define PMS_RX        4
 
+//#define RX_PIN_NUMBER  7
+//#define TX_PIN_NUMBER  6
 #define RX_PIN_NUMBER  PMS_RX
 #define TX_PIN_NUMBER  PMS_TX
 #define CTS_PIN_NUMBER 0
